@@ -1,11 +1,183 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Test</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Browsing task</title>
+<style>
+  body{margin:0;font-family:Georgia,serif;color:#222;background:#fff;line-height:1.6}
+  .hidden{display:none}
+  .wrap{max-width:680px;margin:0 auto;padding:24px 20px 160px}
+  h1{font-size:28px;line-height:1.25}
+  .site-header{background:#14213d;color:#fff;padding:14px 20px;font-family:Arial,sans-serif;font-weight:bold;letter-spacing:1px}
+  .tag{font-family:Arial,sans-serif;font-size:12px;color:#c1121f;text-transform:uppercase;letter-spacing:1px}
+  .box{font-family:Arial,sans-serif;max-width:560px;margin:40px auto;padding:0 20px}
+  button{font-family:Arial,sans-serif;font-size:16px;padding:12px 18px;border-radius:6px;border:1px solid #14213d;background:#fff;color:#14213d;cursor:pointer;margin:4px 6px 4px 0}
+  button.main{background:#14213d;color:#fff}
+  #stopBtn{position:fixed;top:8px;right:8px;z-index:50;font-size:13px;padding:7px 10px;background:#f1f1f1}
+  #banner{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:3px solid #14213d;box-shadow:0 -4px 16px rgba(0,0,0,.2);padding:16px 20px;font-family:Arial,sans-serif;font-size:15px;z-index:20}
+  #banner .inner{max-width:680px;margin:0 auto}
+  #prefs label{display:block;margin:6px 0}
+  #feed{font-family:"Courier New",monospace;background:#111;color:#7CFC9A;padding:16px;border-radius:6px;min-height:260px;font-size:14px}
+  #feed div{margin:3px 0}
+  .note{font-size:14px;color:#555}
+</style>
 </head>
 <body>
-  <h1>It works!</h1>
+
+<button id="stopBtn" onclick="show('exit')">Stop and return to survey</button>
+
+<!-- SCREEN 1: instructions -->
+<div id="intro" class="screen">
+  <div class="box">
+    <h1>Short browsing task</h1>
+    <p>On the next page you will see a news website. Please browse as you normally would when you visit a website for the first time.</p>
+    <p>You can stop at any moment with the "Stop and return to survey" button in the top-right corner.</p>
+    <button class="main" onclick="show('news')">Start</button>
+  </div>
+</div>
+
+<!-- SCREEN 2: mock news site with cookie banner -->
+<div id="news" class="screen hidden">
+  <div class="site-header">THE DAILY HERALD</div>
+  <div class="wrap">
+    <div class="tag">Technology</div>
+    <h1>How cities are rethinking public transport for the next decade</h1>
+    <p>Across Europe, planners are experimenting with new ways of moving people through crowded centres, from low-emission zones to on-demand shuttles.</p>
+    <p>Experts say the biggest challenge is not technology but habit: commuters tend to stick to routines even when better options exist, and small changes in design can shift behaviour at scale.</p>
+    <p>Pilot projects in several cities show promising early results, although long-term effects remain to be seen. Officials plan to publish a full evaluation next year.</p>
+    <p>Critics argue that investment should focus on affordability and reliability before anything else, a view shared by many riders surveyed in recent studies.</p>
+  </div>
+
+  <div id="banner">
+    <div class="inner">
+      <p><strong>We value your privacy</strong><br>We and our partners use cookies to personalise content and ads, provide social media features and analyse our traffic.</p>
+      <div id="prefs" class="hidden">
+        <label><input type="checkbox"> Analytics</label>
+        <label><input type="checkbox"> Advertising</label>
+        <label><input type="checkbox"> Social media</label>
+        <label><input type="checkbox"> Personalisation</label>
+        <button class="main" onclick="savePrefs()">Save my choices</button>
+      </div>
+      <div id="choices">
+        <button class="main" onclick="choose(true)">Accept all</button>
+        <button onclick="document.getElementById('prefs').classList.remove('hidden');document.getElementById('choices').classList.add('hidden')">Customise</button>
+        <button class="main" onclick="choose(false)">Reject all</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 3: consequence simulation -->
+<div id="consequence" class="screen hidden">
+  <div class="box">
+    <h1 id="cTitle"></h1>
+    <div id="feed"></div>
+    <p class="note">Simulation: tracker names are fictional.</p>
+  </div>
+</div>
+
+<!-- SCREEN 4: debrief -->
+<div id="debrief" class="screen hidden">
+  <div class="box">
+    <h1>This was a simulation</h1>
+    <p>Nothing you did was recorded, stored or sent anywhere. The browser details shown came only from your own device and never left it. All tracker names and "inferred interests" were made up.</p>
+    <p>The simulation was part of a study about how people respond to cookie banners. A full explanation follows at the end of the survey.</p>
+    <p><strong>How to protect your data in practice:</strong></p>
+    <ul>
+      <li>Most banners have a "Reject all" or "Manage" option. It usually takes a few seconds.</li>
+      <li>Your browser settings let you block third-party cookies.</li>
+      <li>Tracker-blocking extensions can reduce tracking automatically.</li>
+    </ul>
+    <p><strong>Please close this tab now and return to the survey.</strong></p>
+  </div>
+</div>
+
+<!-- SCREEN 5: early exit -->
+<div id="exit" class="screen hidden">
+  <div class="box">
+    <h1>Task stopped</h1>
+    <p>Nothing has been recorded. Please close this tab and return to the survey. You will receive a full explanation of the study at the end of the survey.</p>
+  </div>
+</div>
+
+<script>
+  function show(id){
+    document.querySelectorAll('.screen').forEach(function(s){s.classList.add('hidden');});
+    document.getElementById(id).classList.remove('hidden');
+    document.getElementById('stopBtn').style.display = (id==='exit'||id==='debrief') ? 'none' : 'block';
+    window.scrollTo(0,0);
+  }
+
+  function savePrefs(){
+    var boxes = document.querySelectorAll('#prefs input');
+    var any = false;
+    boxes.forEach(function(b){ if(b.checked) any = true; });
+    choose(any);
+  }
+
+  // Reads only from the participant's own browser. Nothing is sent or stored.
+  function detect(){
+    var ua = navigator.userAgent, b = 'Unknown browser', o = 'unknown system';
+    if(/Edg\//.test(ua)) b='Edge'; else if(/OPR\//.test(ua)) b='Opera';
+    else if(/Firefox\//.test(ua)) b='Firefox'; else if(/Chrome\//.test(ua)) b='Chrome';
+    else if(/Safari\//.test(ua)) b='Safari';
+    if(/Windows/.test(ua)) o='Windows'; else if(/Android/.test(ua)) o='Android';
+    else if(/iPhone|iPad/.test(ua)) o='iOS'; else if(/Mac OS X/.test(ua)) o='macOS';
+    else if(/Linux/.test(ua)) o='Linux';
+    return b + ' on ' + o;
+  }
+
+  function choose(accepted){
+    document.getElementById('banner').classList.add('hidden');
+    document.getElementById('cTitle').textContent = accepted
+      ? 'By accepting, you allowed our 47 partners to see:'
+      : 'Had you accepted, our 47 partners could have seen:';
+
+    var tz = '';
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) { tz = 'unknown'; }
+
+    var lines = [
+      'Browser and system: ' + detect(),
+      'Language: ' + navigator.language,
+      'Screen size: ' + screen.width + ' x ' + screen.height,
+      'Time zone: ' + tz,
+      'Pages visited on this site: 1',
+      'Time spent reading: tracked',
+      'Inferred interest: technology',
+      'Inferred interest: travel',
+      'Inferred interest: fitness',
+      'Inferred age group: 25-34',
+      'Device ID created: yes',
+      'Shared with: AdTrackr Network (fictional)',
+      'Shared with: DataBridge Partners (fictional)',
+      'Shared with: ProfileWorks Ltd (fictional)',
+      'Shared with: 44 more companies',
+      'Used for: personalised advertising',
+      'Used for: building a long-term profile',
+      'Used for: selling audience segments',
+      'Retention period: up to 13 months',
+      'End of simulation'
+    ];
+
+    show('consequence');
+    var feed = document.getElementById('feed');
+    feed.innerHTML = '';
+    var i = 0;
+    var timer = setInterval(function(){
+      if(i < lines.length){
+        var d = document.createElement('div');
+        d.textContent = '> ' + lines[i];
+        feed.appendChild(d);
+        i++;
+      } else {
+        clearInterval(timer);
+        setTimeout(function(){ show('debrief'); }, 1500);
+      }
+    }, 450);
+  }
+
+  show('intro');
+</script>
 </body>
 </html>
