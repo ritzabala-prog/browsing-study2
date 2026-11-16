@@ -14,6 +14,7 @@
   .box{font-family:Arial,sans-serif;max-width:560px;margin:40px auto;padding:0 20px}
   button{font-family:Arial,sans-serif;font-size:16px;padding:12px 18px;border-radius:6px;border:1px solid #14213d;background:#fff;color:#14213d;cursor:pointer;margin:4px 6px 4px 0}
   button.main{background:#14213d;color:#fff}
+  button.lang{display:block;width:100%;text-align:left;margin:8px 0}
   #stopBtn{position:fixed;top:8px;right:8px;z-index:50;font-size:13px;padding:7px 10px;background:#f1f1f1}
   #banner{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:3px solid #14213d;box-shadow:0 -4px 16px rgba(0,0,0,.2);padding:16px 20px;font-family:Arial,sans-serif;font-size:15px;z-index:20}
   #banner .inner{max-width:680px;margin:0 auto}
@@ -25,15 +26,27 @@
 </head>
 <body>
 
-<button id="stopBtn" onclick="show('exit')">Stop and return to survey</button>
+<button id="stopBtn" class="hidden" onclick="show('exit')" data-t="stop"></button>
+
+<!-- SCREEN 0: language selection -->
+<div id="lang" class="screen hidden">
+  <div class="box">
+    <h1>Choose your language<br>Elige tu idioma<br>Escolha o idioma<br>Kies je taal<br>Sprache wählen</h1>
+    <button class="lang" onclick="setLang('es')">Español</button>
+    <button class="lang" onclick="setLang('pt')">Português</button>
+    <button class="lang" onclick="setLang('en')">English</button>
+    <button class="lang" onclick="setLang('nl')">Nederlands</button>
+    <button class="lang" onclick="setLang('de')">Deutsch</button>
+  </div>
+</div>
 
 <!-- SCREEN 1: instructions -->
-<div id="intro" class="screen">
+<div id="intro" class="screen hidden">
   <div class="box">
-    <h1>Short browsing task</h1>
-    <p>On the next page you will see a news website. Please browse as you normally would when you visit a website for the first time.</p>
-    <p>You can stop at any moment with the "Stop and return to survey" button in the top-right corner.</p>
-    <button class="main" onclick="show('news')">Start</button>
+    <h1 data-t="introTitle"></h1>
+    <p data-t="intro1"></p>
+    <p data-t="intro2"></p>
+    <button class="main" onclick="show('news')" data-t="start"></button>
   </div>
 </div>
 
@@ -41,28 +54,28 @@
 <div id="news" class="screen hidden">
   <div class="site-header">THE DAILY HERALD</div>
   <div class="wrap">
-    <div class="tag">Technology</div>
-    <h1>How cities are rethinking public transport for the next decade</h1>
-    <p>Across Europe, planners are experimenting with new ways of moving people through crowded centres, from low-emission zones to on-demand shuttles.</p>
-    <p>Experts say the biggest challenge is not technology but habit: commuters tend to stick to routines even when better options exist, and small changes in design can shift behaviour at scale.</p>
-    <p>Pilot projects in several cities show promising early results, although long-term effects remain to be seen. Officials plan to publish a full evaluation next year.</p>
-    <p>Critics argue that investment should focus on affordability and reliability before anything else, a view shared by many riders surveyed in recent studies.</p>
+    <div class="tag" data-t="tag"></div>
+    <h1 data-t="artTitle"></h1>
+    <p data-t="art1"></p>
+    <p data-t="art2"></p>
+    <p data-t="art3"></p>
+    <p data-t="art4"></p>
   </div>
 
   <div id="banner">
     <div class="inner">
-      <p><strong>We value your privacy</strong><br>We and our partners use cookies to personalise content and ads, provide social media features and analyse our traffic.</p>
+      <p><strong data-t="bannerTitle"></strong><br><span data-t="bannerText"></span></p>
       <div id="prefs" class="hidden">
-        <label><input type="checkbox"> Analytics</label>
-        <label><input type="checkbox"> Advertising</label>
-        <label><input type="checkbox"> Social media</label>
-        <label><input type="checkbox"> Personalisation</label>
-        <button class="main" onclick="savePrefs()">Save my choices</button>
+        <label><input type="checkbox"> <span data-t="analytics"></span></label>
+        <label><input type="checkbox"> <span data-t="advertising"></span></label>
+        <label><input type="checkbox"> <span data-t="social"></span></label>
+        <label><input type="checkbox"> <span data-t="personalisation"></span></label>
+        <button class="main" onclick="savePrefs()" data-t="save"></button>
       </div>
       <div id="choices">
-        <button class="main" onclick="choose(true)">Accept all</button>
-        <button onclick="document.getElementById('prefs').classList.remove('hidden');document.getElementById('choices').classList.add('hidden')">Customise</button>
-        <button class="main" onclick="choose(false)">Reject all</button>
+        <button class="main" onclick="choose(true)" data-t="acceptAll"></button>
+        <button onclick="document.getElementById('prefs').classList.remove('hidden');document.getElementById('choices').classList.add('hidden')" data-t="customise"></button>
+        <button class="main" onclick="choose(false)" data-t="rejectAll"></button>
       </div>
     </div>
   </div>
@@ -73,111 +86,314 @@
   <div class="box">
     <h1 id="cTitle"></h1>
     <div id="feed"></div>
-    <p class="note">Simulation: tracker names are fictional.</p>
+    <p class="note" data-t="simNote"></p>
   </div>
 </div>
 
 <!-- SCREEN 4: debrief -->
 <div id="debrief" class="screen hidden">
   <div class="box">
-    <h1>This was a simulation</h1>
-    <p>Nothing you did was recorded, stored or sent anywhere. The browser details shown came only from your own device and never left it. All tracker names and "inferred interests" were made up.</p>
-    <p>The simulation was part of a study about how people respond to cookie banners. A full explanation follows at the end of the survey.</p>
-    <p><strong>How to protect your data in practice:</strong></p>
+    <h1 data-t="debTitle"></h1>
+    <p data-t="deb1"></p>
+    <p data-t="deb2"></p>
+    <p><strong data-t="deb3"></strong></p>
     <ul>
-      <li>Most banners have a "Reject all" or "Manage" option. It usually takes a few seconds.</li>
-      <li>Your browser settings let you block third-party cookies.</li>
-      <li>Tracker-blocking extensions can reduce tracking automatically.</li>
+      <li data-t="tip1"></li>
+      <li data-t="tip2"></li>
+      <li data-t="tip3"></li>
     </ul>
-    <p><strong>Please close this tab now and return to the survey.</strong></p>
+    <p><strong data-t="close"></strong></p>
   </div>
 </div>
 
 <!-- SCREEN 5: early exit -->
 <div id="exit" class="screen hidden">
   <div class="box">
-    <h1>Task stopped</h1>
-    <p>Nothing has been recorded. Please close this tab and return to the survey. You will receive a full explanation of the study at the end of the survey.</p>
+    <h1 data-t="exitTitle"></h1>
+    <p data-t="exit1"></p>
   </div>
 </div>
 
 <script>
+  var T = {
+    en: {
+      stop: "Stop and return to survey",
+      introTitle: "Short browsing task",
+      intro1: "On the next page you will see a news website. Please browse as you normally would when you visit a website for the first time.",
+      intro2: "You can stop at any moment with the “Stop and return to survey” button in the top-right corner.",
+      start: "Start",
+      tag: "Technology",
+      artTitle: "How cities are rethinking public transport for the next decade",
+      art1: "Across Europe, planners are experimenting with new ways of moving people through crowded centres, from low-emission zones to on-demand shuttles.",
+      art2: "Experts say the biggest challenge is not technology but habit: commuters tend to stick to routines even when better options exist, and small changes in design can shift behaviour at scale.",
+      art3: "Pilot projects in several cities show promising early results, although long-term effects remain to be seen. Officials plan to publish a full evaluation next year.",
+      art4: "Critics argue that investment should focus on affordability and reliability before anything else, a view shared by many riders surveyed in recent studies.",
+      bannerTitle: "We value your privacy",
+      bannerText: "We and our partners use cookies to personalise content and ads, provide social media features and analyse our traffic.",
+      analytics: "Analytics", advertising: "Advertising", social: "Social media", personalisation: "Personalisation",
+      save: "Save my choices", acceptAll: "Accept all", customise: "Customise", rejectAll: "Reject all",
+      cTitleAcc: "By accepting, you allowed our 47 partners to see:",
+      cTitleRej: "Had you accepted, our 47 partners could have seen:",
+      feed: [
+        "Browser and system: %b", "Language: %l", "Screen size: %s", "Time zone: %t",
+        "Pages visited on this site: 1", "Time spent reading: tracked",
+        "Inferred interest: technology", "Inferred interest: travel", "Inferred interest: fitness",
+        "Inferred age group: 25-34", "Device ID created: yes",
+        "Shared with: AdTrackr Network (fictional)", "Shared with: DataBridge Partners (fictional)", "Shared with: ProfileWorks Ltd (fictional)", "Shared with: 44 more companies",
+        "Used for: personalised advertising", "Used for: building a long-term profile", "Used for: selling audience segments",
+        "Retention period: up to 13 months", "End of simulation"
+      ],
+      simNote: "Simulation: tracker names are fictional.",
+      debTitle: "This was a simulation",
+      deb1: "Nothing you did was recorded, stored or sent anywhere. The browser details shown came only from your own device and never left it. All tracker names and “inferred interests” were made up.",
+      deb2: "The simulation was part of a study about how people respond to cookie banners. A full explanation follows at the end of the survey.",
+      deb3: "How to protect your data in practice:",
+      tip1: "Most banners have a “Reject all” or “Manage” option. It usually takes a few seconds.",
+      tip2: "Your browser settings let you block third-party cookies.",
+      tip3: "Tracker-blocking extensions can reduce tracking automatically.",
+      close: "Please close this tab now and return to the survey.",
+      exitTitle: "Task stopped",
+      exit1: "Nothing has been recorded. Please close this tab and return to the survey. You will receive a full explanation of the study at the end of the survey."
+    },
+    es: {
+      stop: "Detener y volver a la encuesta",
+      introTitle: "Breve tarea de navegación",
+      intro1: "En la siguiente página verás un sitio web de noticias. Navega como lo harías normalmente al visitar una web por primera vez.",
+      intro2: "Puedes detenerte en cualquier momento con el botón «Detener y volver a la encuesta» de la esquina superior derecha.",
+      start: "Empezar",
+      tag: "Tecnología",
+      artTitle: "Cómo las ciudades replantean el transporte público para la próxima década",
+      art1: "En toda Europa, los urbanistas experimentan con nuevas formas de mover a las personas por centros saturados, desde zonas de bajas emisiones hasta lanzaderas a demanda.",
+      art2: "Los expertos afirman que el mayor reto no es la tecnología sino el hábito: los viajeros tienden a mantener sus rutinas incluso cuando existen mejores opciones, y pequeños cambios de diseño pueden modificar el comportamiento a gran escala.",
+      art3: "Los proyectos piloto de varias ciudades muestran resultados iniciales prometedores, aunque aún no se conocen los efectos a largo plazo. Las autoridades prevén publicar una evaluación completa el próximo año.",
+      art4: "Los críticos sostienen que la inversión debería centrarse primero en la asequibilidad y la fiabilidad, una opinión compartida por muchos usuarios encuestados en estudios recientes.",
+      bannerTitle: "Valoramos tu privacidad",
+      bannerText: "Nosotros y nuestros socios usamos cookies para personalizar el contenido y los anuncios, ofrecer funciones de redes sociales y analizar nuestro tráfico.",
+      analytics: "Analíticas", advertising: "Publicidad", social: "Redes sociales", personalisation: "Personalización",
+      save: "Guardar mis elecciones", acceptAll: "Aceptar todo", customise: "Personalizar", rejectAll: "Rechazar todo",
+      cTitleAcc: "Al aceptar, permitiste que nuestros 47 socios vieran:",
+      cTitleRej: "Si hubieras aceptado, nuestros 47 socios habrían podido ver:",
+      feed: [
+        "Navegador y sistema: %b", "Idioma: %l", "Tamaño de pantalla: %s", "Zona horaria: %t",
+        "Páginas visitadas en este sitio: 1", "Tiempo de lectura: registrado",
+        "Interés inferido: tecnología", "Interés inferido: viajes", "Interés inferido: fitness",
+        "Grupo de edad inferido: 25-34", "ID de dispositivo creado: sí",
+        "Compartido con: AdTrackr Network (ficticio)", "Compartido con: DataBridge Partners (ficticio)", "Compartido con: ProfileWorks Ltd (ficticio)", "Compartido con: 44 empresas más",
+        "Usado para: publicidad personalizada", "Usado para: crear un perfil a largo plazo", "Usado para: vender segmentos de audiencia",
+        "Conservación: hasta 13 meses", "Fin de la simulación"
+      ],
+      simNote: "Simulación: los nombres de los rastreadores son ficticios.",
+      debTitle: "Esto era una simulación",
+      deb1: "Nada de lo que hiciste se ha registrado, guardado ni enviado a ningún sitio. Los datos del navegador mostrados provenían solo de tu propio dispositivo y nunca salieron de él. Todos los nombres de rastreadores y los «intereses inferidos» eran inventados.",
+      deb2: "La simulación formaba parte de un estudio sobre cómo reaccionan las personas ante los banners de cookies. Al final de la encuesta recibirás una explicación completa.",
+      deb3: "Cómo proteger tus datos en la práctica:",
+      tip1: "La mayoría de los banners tienen una opción «Rechazar todo» o «Gestionar». Suele llevar unos segundos.",
+      tip2: "La configuración de tu navegador permite bloquear las cookies de terceros.",
+      tip3: "Las extensiones que bloquean rastreadores pueden reducir el seguimiento automáticamente.",
+      close: "Cierra esta pestaña ahora y vuelve a la encuesta.",
+      exitTitle: "Tarea detenida",
+      exit1: "No se ha registrado nada. Cierra esta pestaña y vuelve a la encuesta. Al final de la encuesta recibirás una explicación completa del estudio."
+    },
+    pt: {
+      stop: "Parar e voltar ao inquérito",
+      introTitle: "Breve tarefa de navegação",
+      intro1: "Na página seguinte vai ver um site de notícias. Navegue como faria normalmente ao visitar um site pela primeira vez.",
+      intro2: "Pode parar a qualquer momento com o botão «Parar e voltar ao inquérito» no canto superior direito.",
+      start: "Começar",
+      tag: "Tecnologia",
+      artTitle: "Como as cidades estão a repensar os transportes públicos para a próxima década",
+      art1: "Por toda a Europa, os urbanistas experimentam novas formas de movimentar pessoas em centros congestionados, desde zonas de baixas emissões a transportes a pedido.",
+      art2: "Os especialistas dizem que o maior desafio não é a tecnologia, mas o hábito: os passageiros tendem a manter as suas rotinas mesmo quando existem melhores opções, e pequenas mudanças de design podem alterar comportamentos em grande escala.",
+      art3: "Projetos-piloto em várias cidades mostram resultados iniciais promissores, embora os efeitos a longo prazo ainda não sejam conhecidos. As autoridades planeiam publicar uma avaliação completa no próximo ano.",
+      art4: "Os críticos defendem que o investimento deve concentrar-se primeiro na acessibilidade de preços e na fiabilidade, uma opinião partilhada por muitos utilizadores inquiridos em estudos recentes.",
+      bannerTitle: "Valorizamos a sua privacidade",
+      bannerText: "Nós e os nossos parceiros utilizamos cookies para personalizar conteúdos e anúncios, disponibilizar funcionalidades de redes sociais e analisar o nosso tráfego.",
+      analytics: "Análise", advertising: "Publicidade", social: "Redes sociais", personalisation: "Personalização",
+      save: "Guardar as minhas escolhas", acceptAll: "Aceitar tudo", customise: "Personalizar", rejectAll: "Rejeitar tudo",
+      cTitleAcc: "Ao aceitar, permitiu que os nossos 47 parceiros vissem:",
+      cTitleRej: "Se tivesse aceitado, os nossos 47 parceiros poderiam ter visto:",
+      feed: [
+        "Navegador e sistema: %b", "Idioma: %l", "Tamanho do ecrã: %s", "Fuso horário: %t",
+        "Páginas visitadas neste site: 1", "Tempo de leitura: registado",
+        "Interesse inferido: tecnologia", "Interesse inferido: viagens", "Interesse inferido: fitness",
+        "Faixa etária inferida: 25-34", "ID de dispositivo criado: sim",
+        "Partilhado com: AdTrackr Network (fictício)", "Partilhado com: DataBridge Partners (fictício)", "Partilhado com: ProfileWorks Ltd (fictício)", "Partilhado com: mais 44 empresas",
+        "Utilizado para: publicidade personalizada", "Utilizado para: criar um perfil a longo prazo", "Utilizado para: vender segmentos de audiência",
+        "Retenção: até 13 meses", "Fim da simulação"
+      ],
+      simNote: "Simulação: os nomes dos rastreadores são fictícios.",
+      debTitle: "Isto foi uma simulação",
+      deb1: "Nada do que fez foi registado, guardado ou enviado para lado nenhum. Os dados do navegador apresentados vieram apenas do seu próprio dispositivo e nunca saíram dele. Todos os nomes de rastreadores e «interesses inferidos» eram inventados.",
+      deb2: "A simulação fazia parte de um estudo sobre a forma como as pessoas reagem aos banners de cookies. No final do inquérito receberá uma explicação completa.",
+      deb3: "Como proteger os seus dados na prática:",
+      tip1: "A maioria dos banners tem uma opção «Rejeitar tudo» ou «Gerir». Normalmente demora apenas alguns segundos.",
+      tip2: "As definições do navegador permitem bloquear cookies de terceiros.",
+      tip3: "As extensões que bloqueiam rastreadores podem reduzir o seguimento automaticamente.",
+      close: "Feche este separador agora e volte ao inquérito.",
+      exitTitle: "Tarefa interrompida",
+      exit1: "Não foi registado nada. Feche este separador e volte ao inquérito. No final do inquérito receberá uma explicação completa do estudo."
+    },
+    nl: {
+      stop: "Stoppen en terug naar de vragenlijst",
+      introTitle: "Korte browsetaak",
+      intro1: "Op de volgende pagina zie je een nieuwswebsite. Surf zoals je normaal zou doen wanneer je voor het eerst een website bezoekt.",
+      intro2: "Je kunt op elk moment stoppen met de knop “Stoppen en terug naar de vragenlijst” rechtsboven.",
+      start: "Starten",
+      tag: "Technologie",
+      artTitle: "Hoe steden het openbaar vervoer voor het komende decennium herdenken",
+      art1: "Overal in Europa experimenteren planners met nieuwe manieren om mensen door drukke centra te verplaatsen, van lage-emissiezones tot deelshuttles op aanvraag.",
+      art2: "Volgens experts is de grootste uitdaging niet de technologie maar gewoonte: forenzen houden vast aan hun routines, zelfs als er betere opties bestaan, en kleine ontwerpwijzigingen kunnen gedrag op grote schaal veranderen.",
+      art3: "Proefprojecten in verschillende steden laten veelbelovende eerste resultaten zien, hoewel de effecten op lange termijn nog onduidelijk zijn. Functionarissen willen volgend jaar een volledige evaluatie publiceren.",
+      art4: "Critici stellen dat investeringen eerst moeten gaan naar betaalbaarheid en betrouwbaarheid, een mening die veel reizigers in recente onderzoeken delen.",
+      bannerTitle: "Wij hechten waarde aan je privacy",
+      bannerText: "Wij en onze partners gebruiken cookies om content en advertenties te personaliseren, functies voor sociale media te bieden en ons verkeer te analyseren.",
+      analytics: "Analyse", advertising: "Advertenties", social: "Sociale media", personalisation: "Personalisatie",
+      save: "Mijn keuzes opslaan", acceptAll: "Alles accepteren", customise: "Aanpassen", rejectAll: "Alles weigeren",
+      cTitleAcc: "Door te accepteren heb je onze 47 partners toestemming gegeven om te zien:",
+      cTitleRej: "Als je had geaccepteerd, hadden onze 47 partners kunnen zien:",
+      feed: [
+        "Browser en systeem: %b", "Taal: %l", "Schermgrootte: %s", "Tijdzone: %t",
+        "Bezochte pagina's op deze site: 1", "Leestijd: geregistreerd",
+        "Afgeleide interesse: technologie", "Afgeleide interesse: reizen", "Afgeleide interesse: fitness",
+        "Afgeleide leeftijdsgroep: 25-34", "Apparaat-ID aangemaakt: ja",
+        "Gedeeld met: AdTrackr Network (fictief)", "Gedeeld met: DataBridge Partners (fictief)", "Gedeeld met: ProfileWorks Ltd (fictief)", "Gedeeld met: nog 44 bedrijven",
+        "Gebruikt voor: gepersonaliseerde advertenties", "Gebruikt voor: het opbouwen van een langetermijnprofiel", "Gebruikt voor: het verkopen van doelgroepsegmenten",
+        "Bewaartermijn: tot 13 maanden", "Einde van de simulatie"
+      ],
+      simNote: "Simulatie: de namen van de trackers zijn fictief.",
+      debTitle: "Dit was een simulatie",
+      deb1: "Niets van wat je deed is vastgelegd, opgeslagen of ergens naartoe gestuurd. De getoonde browsergegevens kwamen alleen van je eigen apparaat en hebben dat nooit verlaten. Alle namen van trackers en “afgeleide interesses” waren verzonnen.",
+      deb2: "De simulatie maakte deel uit van een onderzoek naar hoe mensen reageren op cookiebanners. Aan het einde van de vragenlijst volgt een volledige toelichting.",
+      deb3: "Zo bescherm je je gegevens in de praktijk:",
+      tip1: "De meeste banners hebben een optie “Alles weigeren” of “Beheren”. Dat kost meestal maar een paar seconden.",
+      tip2: "Met de instellingen van je browser kun je cookies van derden blokkeren.",
+      tip3: "Extensies die trackers blokkeren kunnen het volgen automatisch verminderen.",
+      close: "Sluit dit tabblad nu en ga terug naar de vragenlijst.",
+      exitTitle: "Taak gestopt",
+      exit1: "Er is niets vastgelegd. Sluit dit tabblad en ga terug naar de vragenlijst. Aan het einde van de vragenlijst ontvang je een volledige toelichting op het onderzoek."
+    },
+    de: {
+      stop: "Abbrechen und zurück zur Umfrage",
+      introTitle: "Kurze Browsing-Aufgabe",
+      intro1: "Auf der nächsten Seite siehst du eine Nachrichtenwebsite. Surfe so, wie du es normalerweise tun würdest, wenn du eine Website zum ersten Mal besuchst.",
+      intro2: "Du kannst jederzeit mit der Schaltfläche „Abbrechen und zurück zur Umfrage“ oben rechts abbrechen.",
+      start: "Starten",
+      tag: "Technologie",
+      artTitle: "Wie Städte den öffentlichen Nahverkehr für das nächste Jahrzehnt neu denken",
+      art1: "In ganz Europa experimentieren Planer mit neuen Wegen, Menschen durch überfüllte Zentren zu bewegen, von Niedrigemissionszonen bis zu Shuttles auf Abruf.",
+      art2: "Experten zufolge ist nicht die Technologie die größte Herausforderung, sondern die Gewohnheit: Pendler bleiben bei ihren Routinen, selbst wenn es bessere Optionen gibt, und kleine Designänderungen können das Verhalten im großen Maßstab verändern.",
+      art3: "Pilotprojekte in mehreren Städten zeigen vielversprechende erste Ergebnisse, die langfristigen Auswirkungen bleiben jedoch abzuwarten. Die Behörden wollen im nächsten Jahr eine vollständige Auswertung veröffentlichen.",
+      art4: "Kritiker meinen, Investitionen sollten sich zuerst auf Bezahlbarkeit und Zuverlässigkeit konzentrieren, eine Ansicht, die viele Fahrgäste in aktuellen Studien teilen.",
+      bannerTitle: "Wir respektieren deine Privatsphäre",
+      bannerText: "Wir und unsere Partner verwenden Cookies, um Inhalte und Anzeigen zu personalisieren, Funktionen für soziale Medien anzubieten und unseren Datenverkehr zu analysieren.",
+      analytics: "Analyse", advertising: "Werbung", social: "Soziale Medien", personalisation: "Personalisierung",
+      save: "Meine Auswahl speichern", acceptAll: "Alle akzeptieren", customise: "Anpassen", rejectAll: "Alle ablehnen",
+      cTitleAcc: "Durch das Akzeptieren hast du unseren 47 Partnern erlaubt zu sehen:",
+      cTitleRej: "Hättest du akzeptiert, hätten unsere 47 Partner sehen können:",
+      feed: [
+        "Browser und System: %b", "Sprache: %l", "Bildschirmgröße: %s", "Zeitzone: %t",
+        "Besuchte Seiten auf dieser Website: 1", "Lesezeit: erfasst",
+        "Abgeleitetes Interesse: Technologie", "Abgeleitetes Interesse: Reisen", "Abgeleitetes Interesse: Fitness",
+        "Abgeleitete Altersgruppe: 25-34", "Geräte-ID erstellt: ja",
+        "Weitergegeben an: AdTrackr Network (fiktiv)", "Weitergegeben an: DataBridge Partners (fiktiv)", "Weitergegeben an: ProfileWorks Ltd (fiktiv)", "Weitergegeben an: 44 weitere Unternehmen",
+        "Verwendet für: personalisierte Werbung", "Verwendet für: den Aufbau eines Langzeitprofils", "Verwendet für: den Verkauf von Zielgruppensegmenten",
+        "Speicherdauer: bis zu 13 Monate", "Ende der Simulation"
+      ],
+      simNote: "Simulation: Die Namen der Tracker sind fiktiv.",
+      debTitle: "Das war eine Simulation",
+      deb1: "Nichts von dem, was du getan hast, wurde aufgezeichnet, gespeichert oder irgendwohin gesendet. Die angezeigten Browserdaten stammten nur von deinem eigenen Gerät und haben es nie verlassen. Alle Namen von Trackern und „abgeleitete Interessen“ waren erfunden.",
+      deb2: "Die Simulation war Teil einer Studie darüber, wie Menschen auf Cookie-Banner reagieren. Am Ende der Umfrage folgt eine ausführliche Erklärung.",
+      deb3: "So schützt du deine Daten in der Praxis:",
+      tip1: "Die meisten Banner haben eine Option „Alle ablehnen“ oder „Verwalten“. Das dauert meist nur wenige Sekunden.",
+      tip2: "In den Browsereinstellungen kannst du Cookies von Drittanbietern blockieren.",
+      tip3: "Erweiterungen, die Tracker blockieren, können das Tracking automatisch verringern.",
+      close: "Schließe diesen Tab jetzt und kehre zur Umfrage zurück.",
+      exitTitle: "Aufgabe abgebrochen",
+      exit1: "Es wurde nichts aufgezeichnet. Schließe diesen Tab und kehre zur Umfrage zurück. Am Ende der Umfrage erhältst du eine ausführliche Erklärung der Studie."
+    }
+  };
+
+  var lang = "en";
+
+  function applyLang(){
+    var d = T[lang];
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-t]").forEach(function(el){
+      el.textContent = d[el.getAttribute("data-t")];
+    });
+  }
+
+  function setLang(code){
+    lang = code;
+    applyLang();
+    show("intro");
+  }
+
   function show(id){
-    document.querySelectorAll('.screen').forEach(function(s){s.classList.add('hidden');});
-    document.getElementById(id).classList.remove('hidden');
-    document.getElementById('stopBtn').style.display = (id==='exit'||id==='debrief') ? 'none' : 'block';
-    window.scrollTo(0,0);
+    document.querySelectorAll(".screen").forEach(function(s){ s.classList.add("hidden"); });
+    document.getElementById(id).classList.remove("hidden");
+    var hideStop = (id === "exit" || id === "debrief" || id === "lang");
+    document.getElementById("stopBtn").classList.toggle("hidden", hideStop);
+    window.scrollTo(0, 0);
   }
 
   function savePrefs(){
-    var boxes = document.querySelectorAll('#prefs input');
     var any = false;
-    boxes.forEach(function(b){ if(b.checked) any = true; });
+    document.querySelectorAll("#prefs input").forEach(function(b){ if(b.checked) any = true; });
     choose(any);
   }
 
   // Reads only from the participant's own browser. Nothing is sent or stored.
   function detect(){
-    var ua = navigator.userAgent, b = 'Unknown browser', o = 'unknown system';
-    if(/Edg\//.test(ua)) b='Edge'; else if(/OPR\//.test(ua)) b='Opera';
-    else if(/Firefox\//.test(ua)) b='Firefox'; else if(/Chrome\//.test(ua)) b='Chrome';
-    else if(/Safari\//.test(ua)) b='Safari';
-    if(/Windows/.test(ua)) o='Windows'; else if(/Android/.test(ua)) o='Android';
-    else if(/iPhone|iPad/.test(ua)) o='iOS'; else if(/Mac OS X/.test(ua)) o='macOS';
-    else if(/Linux/.test(ua)) o='Linux';
-    return b + ' on ' + o;
+    var ua = navigator.userAgent, b = "?", o = "?";
+    if(/Edg\//.test(ua)) b = "Edge"; else if(/OPR\//.test(ua)) b = "Opera";
+    else if(/Firefox\//.test(ua)) b = "Firefox"; else if(/Chrome\//.test(ua)) b = "Chrome";
+    else if(/Safari\//.test(ua)) b = "Safari";
+    if(/Windows/.test(ua)) o = "Windows"; else if(/Android/.test(ua)) o = "Android";
+    else if(/iPhone|iPad/.test(ua)) o = "iOS"; else if(/Mac OS X/.test(ua)) o = "macOS";
+    else if(/Linux/.test(ua)) o = "Linux";
+    return b + " / " + o;
   }
 
   function choose(accepted){
-    document.getElementById('banner').classList.add('hidden');
-    document.getElementById('cTitle').textContent = accepted
-      ? 'By accepting, you allowed our 47 partners to see:'
-      : 'Had you accepted, our 47 partners could have seen:';
+    var d = T[lang];
+    document.getElementById("banner").classList.add("hidden");
+    document.getElementById("cTitle").textContent = accepted ? d.cTitleAcc : d.cTitleRej;
 
-    var tz = '';
-    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) { tz = 'unknown'; }
+    var tz = "?";
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) {}
 
-    var lines = [
-      'Browser and system: ' + detect(),
-      'Language: ' + navigator.language,
-      'Screen size: ' + screen.width + ' x ' + screen.height,
-      'Time zone: ' + tz,
-      'Pages visited on this site: 1',
-      'Time spent reading: tracked',
-      'Inferred interest: technology',
-      'Inferred interest: travel',
-      'Inferred interest: fitness',
-      'Inferred age group: 25-34',
-      'Device ID created: yes',
-      'Shared with: AdTrackr Network (fictional)',
-      'Shared with: DataBridge Partners (fictional)',
-      'Shared with: ProfileWorks Ltd (fictional)',
-      'Shared with: 44 more companies',
-      'Used for: personalised advertising',
-      'Used for: building a long-term profile',
-      'Used for: selling audience segments',
-      'Retention period: up to 13 months',
-      'End of simulation'
-    ];
+    var lines = d.feed.map(function(l){
+      return l.replace("%b", detect())
+              .replace("%l", navigator.language)
+              .replace("%s", screen.width + " x " + screen.height)
+              .replace("%t", tz);
+    });
 
-    show('consequence');
-    var feed = document.getElementById('feed');
-    feed.innerHTML = '';
+    show("consequence");
+    var feed = document.getElementById("feed");
+    feed.innerHTML = "";
     var i = 0;
     var timer = setInterval(function(){
       if(i < lines.length){
-        var d = document.createElement('div');
-        d.textContent = '> ' + lines[i];
-        feed.appendChild(d);
+        var div = document.createElement("div");
+        div.textContent = "> " + lines[i];
+        feed.appendChild(div);
         i++;
       } else {
         clearInterval(timer);
-        setTimeout(function(){ show('debrief'); }, 1500);
+        setTimeout(function(){ show("debrief"); }, 1500);
       }
     }, 450);
   }
 
-  show('intro');
+  // Start: use ?lang=xx from the link if present, otherwise show the selector
+  (function(){
+    var p = "";
+    try { p = new URLSearchParams(window.location.search).get("lang") || ""; } catch(e) {}
+    p = p.toLowerCase();
+    if(T[p]){ setLang(p); } else { show("lang"); }
+  })();
 </script>
 </body>
 </html>
